@@ -10,10 +10,15 @@ interface User {
   role: "READER" | "AUTHOR" | "ADMIN";
 }
 
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
 interface AuthContextData {
   user: User | null;
   isAuthenticated: boolean;
-  login: (data: unknown) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
 }
 
@@ -22,7 +27,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
-  async function login(credentials: unknown) {
+  async function login(credentials: LoginCredentials) {
     try {
       const response = await api.post("/auth/login", credentials);
       setUser(response.data);
