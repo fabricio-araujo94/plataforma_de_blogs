@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-export function generateSlud(title: string): string {
+export function generateSlug(title: string): string {
   const baseSlug = title
     .toLowerCase()
     .normalize("NFD") // Separates accents from letters
