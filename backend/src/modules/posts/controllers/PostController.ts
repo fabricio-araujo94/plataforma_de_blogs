@@ -56,4 +56,30 @@ export class PostController {
       }
     }
   }
+
+  static async list(req: Request, res: Response) {
+    try {
+      const pageParam = req.query.page;
+      const limitParam = req.query.limit;
+
+      const page = typeof pageParam === "string" ? parseInt(pageParam, 10) : 1;
+      const limit =
+        typeof limitParam === "string" ? parseInt(limitParam, 10) : 10;
+
+      const safePage = isNaN(page) || page < 1 ? 1 : page;
+      const safeLimit = isNaN(limit) || limit < 1 || limit > 50 ? 10 : limit;
+
+      const posts = await PostService.list(safePage, safeLimit);
+
+      res.status(200).json(posts);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        res.status(400).json({ error: err.message });
+      } else {
+        res
+          .status(500)
+          .json({ error: "Internal error while retrieving posts." });
+      }
+    }
+  }
 }

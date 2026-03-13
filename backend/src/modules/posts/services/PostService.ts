@@ -69,4 +69,32 @@ export class PostService {
       data: updateData,
     });
   }
+
+  static async list(page: number = 1, limit: number = 10) {
+    const skip = (page - 1) * limit;
+
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+      },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        excerpt: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: limit,
+    });
+
+    return posts;
+  }
 }
