@@ -5,6 +5,7 @@ import helmet from "helmet";
 
 import { AuthController } from "./modules/users/controllers/AuthController";
 import { PostController } from "./modules/posts/controllers/PostController";
+import { MediaController } from "./modules/media/controllers/MediaController";
 
 import { authMiddleware } from "./shared/middlewares/authMiddleware";
 
@@ -29,5 +30,7 @@ app.get("/api/posts/:slug", PostController.getBySlug);
 
 app.post("/api/posts", authMiddleware, PostController.create);
 app.post("/api/posts/:id", authMiddleware, PostController.update);
+
+app.post("/api/media/upload-url", authMiddleware, MediaController.getUploadUrl);
 
 export { app };
