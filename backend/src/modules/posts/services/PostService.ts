@@ -97,4 +97,23 @@ export class PostService {
 
     return posts;
   }
+
+  static async getBySlug(slug: string) {
+    const post = await prisma.post.findUnique({
+      where: {
+        slug,
+      },
+      include: {
+        author: {
+          select: { name: true, bio: true, avatarUrl: true };
+        }
+      }
+    });
+
+    if (!post || !post.published) {
+      throw new Error("Post not found.");
+    }
+
+    return post;
+  }
 }

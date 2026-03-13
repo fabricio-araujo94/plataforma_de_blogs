@@ -82,4 +82,24 @@ export class PostController {
       }
     }
   }
+
+  static async getBySlug(req: Request, res: Response) {
+    try {
+      const { slug } = req.params;
+
+      if (!slug || Array.isArray(slug)) {
+        return res.status(400).json({ error: "Slug is required." });
+      }
+
+      const post = await PostService.getBySlug(slug);
+
+      res.status(200).json(post);
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message === "Post not found.") {
+        res.status(404).json({ error: err.message });
+      } else {
+        res.status(500).json({ error: "Internal error while retrieving post" });
+      }
+    }
+  }
 }

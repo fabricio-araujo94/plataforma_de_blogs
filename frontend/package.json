@@ -14,6 +14,7 @@
     "@editorjs/list": "^2.0.9",
     "@editorjs/paragraph": "^2.11.7",
     "axios": "^1.13.6",
+    "dompurify": "^3.3.3",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

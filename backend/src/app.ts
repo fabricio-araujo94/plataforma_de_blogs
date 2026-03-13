@@ -25,6 +25,7 @@ app.post("/api/auth/register", AuthController.register);
 app.post("/api/auth/login", AuthController.login);
 
 app.get("/api/posts", PostController.list);
+app.get("/api/posts/:slug", PostController.getBySlug);
 
 app.post("/api/posts", authMiddleware, PostController.create);
 app.post("/api/posts/:id", authMiddleware, PostController.update);
