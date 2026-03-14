@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import EditorJS, { OutputData } from "@editorjs/editorjs";
+import EditorJS, { OutputData, ToolConstructable } from "@editorjs/editorjs";
 import Header from "@editorjs/header";
-import List from "@editorjs/header";
+import List from "@editorjs/list";
 import Paragraph from "@editorjs/paragraph";
+import ImageTool from "@editorjs/image";
+import { uploadImageByFile, uploadImageByUrl } from "@/lib/editorUploader";
 
 interface EditorComponentProps {
   initialData?: OutputData;
@@ -25,16 +27,25 @@ export default function EditorComponent({
         placeholder: "Start writing your story......",
         tools: {
           header: {
-            class: Header as unknown as any,
+            class: Header as unknown as ToolConstructable,
             inlineToolbar: true,
           },
           list: {
-            class: List as unknown as any,
+            class: List as unknown as ToolConstructable,
             inlineToolbar: true,
           },
           paragraph: {
-            class: Paragraph as unknown as any,
+            class: Paragraph as unknown as ToolConstructable,
             inlineToolbar: true,
+          },
+          image: {
+            class: ImageTool as unknown as ToolConstructable,
+            config: {
+              uploader: {
+                uploadByFile: uploadImageByFile,
+                uploadByUrl: uploadImageByUrl,
+              },
+            },
           },
         },
         onChange: async () => {

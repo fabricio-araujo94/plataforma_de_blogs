@@ -1,5 +1,6 @@
 import React from "react";
 import DOMPurify from "dompurify";
+import Image from "next/image";
 
 export interface BlockData {
   id?: string;
@@ -94,6 +95,43 @@ export function BlockRenderer({ content }: BlockRendererProps) {
                   );
                 })}
               </ListTag>
+            );
+          }
+
+          case "image": {
+            const file = block.data.file as Record<string, unknown> | undefined;
+            const url = typeof file?.url === "string" ? file.url : "";
+            const caption =
+              typeof block.data.caption === "string" ? block.data.caption : "";
+            const withBorder = block.data.withBorder === true;
+            const withBackground = block.data.withBackground === true;
+
+            if (!url) return null;
+
+            return (
+              <figure
+                key={key}
+                className={`my-8 flex flex-col items-center ${withBackground ? "bg-gray-50 p-6 rounded-lg" : ""}`}
+              >
+                <div
+                  className={`relative w-full max-w-3xl overflow-hidden rounded-lg ${withBorder ? "border border-gray-200" : ""}`}
+                >
+                  <Image
+                    src={url}
+                    alt={caption || "Article image"}
+                    width={800}
+                    height={500}
+                    className="w-full h-auto object-cover"
+                    unoptimized={process.env.NODE_ENV === "development"}
+                  />
+                </div>
+                {caption && (
+                  <figcaption
+                    className="mt-3 text-sm text-center text-gray-500"
+                    dangerouslySetInnerHTML={{ __html: sanitize(caption) }}
+                  />
+                )}
+              </figure>
             );
           }
 
