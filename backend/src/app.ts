@@ -6,6 +6,7 @@ import helmet from "helmet";
 import { AuthController } from "./modules/users/controllers/AuthController";
 import { PostController } from "./modules/posts/controllers/PostController";
 import { MediaController } from "./modules/media/controllers/MediaController";
+import { LikeController } from "./modules/interactions/controllers/LikeController";
 
 import { authMiddleware } from "./shared/middlewares/authMiddleware";
 
@@ -25,11 +26,19 @@ app.use(cookieParser());
 app.post("/api/auth/register", AuthController.register);
 app.post("/api/auth/login", AuthController.login);
 
+app.get("/api/posts/:postId/likes", LikeController.getLikesStatus);
+
 app.get("/api/posts", PostController.list);
 app.get("/api/posts/:slug", PostController.getBySlug);
 
 app.post("/api/posts", authMiddleware, PostController.create);
 app.post("/api/posts/:id", authMiddleware, PostController.update);
+
+app.get(
+  "/api/posts/:postId/like",
+  authMiddleware,
+  LikeController.togglePostLike,
+);
 
 app.post("/api/media/upload-url", authMiddleware, MediaController.getUploadUrl);
 
