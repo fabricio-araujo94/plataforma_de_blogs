@@ -7,6 +7,7 @@ import { AuthController } from "./modules/users/controllers/AuthController";
 import { PostController } from "./modules/posts/controllers/PostController";
 import { MediaController } from "./modules/media/controllers/MediaController";
 import { LikeController } from "./modules/interactions/controllers/LikeController";
+import { CommentController } from "./modules/interactions/controllers/CommentController";
 
 import { authMiddleware } from "./shared/middlewares/authMiddleware";
 
@@ -38,6 +39,13 @@ app.get(
   "/api/posts/:postId/like",
   authMiddleware,
   LikeController.togglePostLike,
+);
+
+app.get("/api/posts/:postId/comments", CommentController.list);
+app.post(
+  "/api/posts/:postId/comments",
+  authMiddleware,
+  CommentController.create,
 );
 
 app.post("/api/media/upload-url", authMiddleware, MediaController.getUploadUrl);
