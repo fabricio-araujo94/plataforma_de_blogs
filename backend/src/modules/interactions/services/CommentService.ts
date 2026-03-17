@@ -43,6 +43,9 @@ export class CommentService {
         postId,
         parentId: null,
         isHidden: false,
+        user: {
+          isShadowbanned: false,
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -52,7 +55,12 @@ export class CommentService {
           select: { name: true, avatarUrl: true },
         },
         replies: {
-          where: { isHidden: false },
+          where: {
+            isHidden: false,
+            user: {
+              isShadowbanned: false,
+            },
+          },
           orderBy: { createdAt: "asc" },
           include: {
             user: { select: { name: true, avatarUrl: true } },

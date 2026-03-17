@@ -69,4 +69,11 @@ app.get(
   AdminController.getDashboardStats,
 );
 
+app.patch(
+  "/api/admin/users/:targetUserId/shadowban",
+  authMiddleware,
+  requireRole([Role.ADMIN]),
+  AdminController.toggleShadowban,
+);
+
 export { app };

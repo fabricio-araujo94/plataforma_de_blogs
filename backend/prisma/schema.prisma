@@ -23,6 +23,8 @@ model User {
   avatarUrl String?
   role      Role      @default(READER) // Access levels
 
+  isShadowbanned Boolean @default(false)
+
   posts     Post[]
   likes     Like[]
   comments  Comment[]
