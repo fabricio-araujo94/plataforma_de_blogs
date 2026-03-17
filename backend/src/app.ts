@@ -9,6 +9,7 @@ import { MediaController } from "./modules/media/controllers/MediaController";
 import { LikeController } from "./modules/interactions/controllers/LikeController";
 import { CommentController } from "./modules/interactions/controllers/CommentController";
 import { ViewController } from "./modules/interactions/controllers/ViewController";
+import { AuthorController } from "./modules/users/controllers/AuthorController";
 
 import { authMiddleware } from "./shared/middlewares/authMiddleware";
 
@@ -54,5 +55,7 @@ app.post("/api/media/upload-url", authMiddleware, MediaController.getUploadUrl);
 
 app.post("/api/post/:postId/view", ViewController.register);
 app.get("/api/posts/:postId/views", ViewController.getCount);
+
+app.get("/api/authors/:id", AuthorController.getProfile);
 
 export { app };
