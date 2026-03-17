@@ -31,6 +31,7 @@ app.post("/api/auth/login", AuthController.login);
 app.get("/api/posts/:postId/likes", LikeController.getLikesStatus);
 
 app.get("/api/posts", PostController.list);
+app.get("/api/posts/search", PostController.search);
 app.get("/api/posts/:slug", PostController.getBySlug);
 
 app.post("/api/posts", authMiddleware, PostController.create);

@@ -102,4 +102,29 @@ export class PostController {
       }
     }
   }
+
+  static async search(req: Request, res: Response) {
+    try {
+      const queryParam = req.query.q;
+
+      if (typeof queryParam !== "string" || queryParam.trim().length === 0) {
+        return res
+          .status(400)
+          .json({ error: "The search parameter (q) is required." });
+      }
+
+      const limitParam = req.query.limit;
+      const limit =
+        typeof limitParam === "string" ? parseInt(limitParam, 10) : 10;
+      const safeLimit = isNaN(limit) || limit < 1 || limit > 50 ? 10 : limit;
+
+      const results = await PostService.search(queryParam, safeLimit);
+
+      res.status(200).json(results);
+    } catch (err: unknown) {
+      res
+        .status(500)
+        .json({ error: "Internal error while performing the search." });
+    }
+  }
 }

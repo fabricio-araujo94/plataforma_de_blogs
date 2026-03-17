@@ -9,6 +9,16 @@ interface EditorContent {
   blocks: Array<{ type: string; data: Record<string, unknown> }>;
 }
 
+interface SearchResult {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  createdAt: Date;
+  authorName: string;
+  rank: number;
+}
+
 export class PostService {
   static async create(authorId: string, data: CreatePostDTO) {
     const slug = generateSlug(data.title);
@@ -105,9 +115,9 @@ export class PostService {
       },
       include: {
         author: {
-          select: { name: true, bio: true, avatarUrl: true };
-        }
-      }
+          select: { name: true, bio: true, avatarUrl: true },
+        },
+      },
     });
 
     if (!post || !post.published) {
@@ -115,5 +125,40 @@ export class PostService {
     }
 
     return post;
+  }
+
+  static async search(
+    query: string,
+    limit: number = 10,
+  ): Promise<SearchResult[]> {
+    if (!query || query.trim().length === 0) {
+      return [];
+    }
+
+    const searchQuery = query.trim();
+
+    const posts = await prisma.$queryRaw<SearchResult[]>`
+      SELECT
+        p.id,
+        p.slug,
+        p.title,
+        p.excerpt,
+        p."createdAt",
+        u.name AS "authorName",
+        ts_rank(to_tsvector('portuguese', ´.title || ' ' || coalesce(p.excerpt, '')), websearch_to_tsquery('portuguese', ${searchQuery})) AS rank,
+        similarity(p.title, ${searchQuery}) AS sim_score
+      FROM "Post" p
+      INNER JOIN "User" u ON p."authorId" = u.id
+      WHERE p.published = true
+        AND (
+          to_tsvector('portuguese', p.title || ' ' || coalesce(p.excerpt, '')) @@ websearch_to_tsquery('portuguese', ${searchQuery})
+          OR
+          p.title % ${searchQuery}
+        )
+        ORDER BY rank DESC, sim_score DESC
+        LIMIT ${limit};
+      `;
+
+    return posts;
   }
 }
