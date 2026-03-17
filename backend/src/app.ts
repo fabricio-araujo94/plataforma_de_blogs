@@ -10,8 +10,12 @@ import { LikeController } from "./modules/interactions/controllers/LikeControlle
 import { CommentController } from "./modules/interactions/controllers/CommentController";
 import { ViewController } from "./modules/interactions/controllers/ViewController";
 import { AuthorController } from "./modules/users/controllers/AuthorController";
+import { AdminController } from "./modules/admin/controllers/AdminController";
 
 import { authMiddleware } from "./shared/middlewares/authMiddleware";
+
+import { Role } from "./generated/prisma/enums";
+import { requireRole } from "./shared/middlewares/roleMiddleware";
 
 const app = express();
 
@@ -57,5 +61,12 @@ app.post("/api/post/:postId/view", ViewController.register);
 app.get("/api/posts/:postId/views", ViewController.getCount);
 
 app.get("/api/authors/:id", AuthorController.getProfile);
+
+app.get(
+  "/api/admin/stats",
+  authMiddleware,
+  requireRole([Role.ADMIN]),
+  AdminController.getDashboardStats,
+);
 
 export { app };
