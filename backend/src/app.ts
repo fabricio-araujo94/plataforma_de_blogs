@@ -76,4 +76,11 @@ app.patch(
   AdminController.toggleShadowban,
 );
 
+app.get(
+  "/api/admin/users",
+  authMiddleware,
+  requireRole([Role.ADMIN]),
+  AdminController.listUsers,
+);
+
 export { app };

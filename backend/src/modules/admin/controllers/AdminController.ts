@@ -50,4 +50,23 @@ export class AdminController {
       }
     }
   }
+
+  static async listUsers(req: Request, res: Response) {
+    try {
+      const users = await prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          isShadowbanned: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      res.status(200).json(users);
+    } catch (err: unknown) {
+      res.status(500).json({ error: "Error listing users." });
+    }
+  }
 }
