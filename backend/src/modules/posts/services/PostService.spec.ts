@@ -91,5 +91,67 @@ describe("PostService", () => {
         expect(prismaMock.post.update).toHaveBeenCalledOnce();
       });
     });
+
+    describe("getBySlug", () => {
+      it("should return the post if it exists and has been published", async () => {
+        const mockSlug = "artigo-valido";
+        prismaMock.post.findUnique.mockResolvedValue({
+          id: "post-1",
+          slug: mockSlug,
+          published: true,
+        } as any);
+
+        const result = await PostService.getBySlug(mockSlug);
+
+        expect(prismaMock.post.findUnique).toHaveBeenCalledWith({
+          where: { slug: mockSlug },
+          include: {
+            author: { select: { name: true, bio: true, avatarUrl: true } },
+          },
+        });
+        expect(result.id).toBe("post-1");
+      });
+
+      it("should return the post if it exists and has been published", async () => {
+        prismaMock.post.findUnique.mockResolvedValue({
+          id: "post-1",
+          slug: "rascunho-secreto",
+          published: false,
+        } as any);
+
+        await expect(PostService.getBySlug("rascunho-secreto")).rejects.toThrow(
+          "Post not found.",
+        );
+      });
+
+      it("should throw an error if the post does not exist in the database", async () => {
+        prismaMock.post.findUnique.mockResolvedValue(null);
+        await expect(PostService.getBySlug("nao-existe")).rejects.toThrow(
+          "Post not found.",
+        );
+      });
+    });
+
+    describe("search", () => {
+      it("should return an empty array if the query is empty or contains only spaces", async () => {
+        const result = await PostService.search("   ");
+        expect(result).toEqual([]);
+        expect(prismaMock.$queryRaw).not.toHaveBeenCalled();
+      });
+
+      it("should execute the raw query correctly and return the search results", async () => {
+        const mockQuery = "Tecnologia";
+        const mockResults = [
+          { id: "1", title: "Tecnologia Avançada", rank: 0.9 },
+        ];
+
+        prismaMock.$queryRaw.mockResolvedValue(mockResults);
+
+        const result = await PostService.search(mockQuery, 5);
+
+        expect(prismaMock.$queryRaw).toHaveBeenCalledOnce();
+        expect(result).toEqual(mockResults);
+      });
+    });
   });
 });
