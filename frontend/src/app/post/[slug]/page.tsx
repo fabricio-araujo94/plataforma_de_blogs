@@ -1,6 +1,8 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { BlockRenderer, EditorContent } from "@/components/posts/BlockRenderer";
+import { LikeButton } from "@/components/interactions/LikeButton";
+import { CommentsSection } from "@/components/interactions/CommentsSection";
 
 interface PostDetail {
   id: string;
@@ -20,22 +22,26 @@ async function getPostBySlug(slug: string): Promise<PostDetail | null> {
 
   try {
     const res = await fetch(`${apiUrl}/posts/${slug}`, {
-      next: { revalidate: 60 }
+      next: { revalidate: 60 },
     });
 
     if (!res.ok) {
       if (res.status === 404) return null;
-      throw new Error("Error retrieving the post.");
+      throw new Error("Erro ao buscar o post.");
     }
 
     return res.json();
   } catch (error: unknown) {
-    console.error(`Error retrieving the post ${slug}:` error);
+    console.error(`Erro ao buscar o post ${slug}:`, error);
     return null;
   }
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
+export default async function PostPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const post = await getPostBySlug(params.slug);
 
   if (!post) {
@@ -55,17 +61,26 @@ export default async function PostPage({ params }: { params: { slug: string } })
           {post.title}
         </h1>
 
-        <div className="flex items-center justify-center gap-4 text-gray-600">
-          <div className="flex flex-col items-center">
-            <span className="font-semibold text-gray-900">{post.author.name}</span>
-            <div className="flex items-center gap-2 text-sm mt-1">
-              <time dateTime={post.createdAt}>{formattedDate}</time>
-              <span>•</span>
-              <span>Leitura de 5 minutos</span>
-            </div>
+        <div className="flex items-center gap-4 justify-center">
+          <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600">
+            {post.author.name?.[0]?.toUpperCase() ?? "?"}
+          </div>
+          <div className="text-left">
+            <p className="font-medium text-gray-900">{post.author.name}</p>
+            <p className="text-sm text-gray-500">
+              {formattedDate} • Leitura de 5 minutos
+            </p>
           </div>
         </div>
       </header>
+
+      <div className="flex items-center gap-4 py-4 border-y my-8">
+        <LikeButton
+          postId={post.id}
+          initialLikes={0}
+          initialUserLiked={false}
+        />
+      </div>
 
       <main>
         <BlockRenderer content={post.content} />
@@ -74,20 +89,20 @@ export default async function PostPage({ params }: { params: { slug: string } })
       <footer className="mt-16 pt-8 border-t border-gray-100">
         <div className="flex items-start gap-4">
           <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-bold shrink-0">
-            {post.author.name.charAt(0).toUpperCase()}
+            {post.author.name?.[0]?.toUpperCase() ?? "?"}
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-1">
               Escrito por {post.author.name}
             </h3>
             {post.author.bio && (
-              <p className="text-gray-600 leading-relaxed">
-                {post.author.bio}
-              </p>
+              <p className="text-gray-600 leading-relaxed">{post.author.bio}</p>
             )}
           </div>
         </div>
       </footer>
+
+      <CommentsSection postId={post.id} />
     </article>
-  )
+  );
 }
