@@ -9,7 +9,9 @@ vi.mock("@aws-sdk/s3-request-presigner", () => ({
 
 vi.mock("@aws-sdk/client-s3", () => ({
   S3Client: vi.fn(),
-  PutObjectCommand: vi.fn((args) => args),
+  PutObjectCommand: vi.fn(function (args) {
+    return args;
+  }),
 }));
 
 describe("MediaService", () => {
@@ -45,12 +47,12 @@ describe("MediaService", () => {
       expect(commandArgs.Key).toMatch(
         new RegExp(`^uploads/users/${mockUserId}/[a-f0-9]+-minha_foto.png$`),
       );
-      expect(commandArgs.contentType).toBe("image/png");
-      expect(commandArgs.contentLength).toBe(1048576);
+      expect(commandArgs.ContentType).toBe("image/png");
+      expect(commandArgs.ContentLength).toBe(1048576);
 
       expect(result).toHaveProperty("uploadUrl", fakeSignedUrl);
       expect(result.publicUrl).toMatch(
-        /^https:\/\/media\.test\.com\/uploads\/users\/user\/[a-f0-9]+-minha_foto.png$/,
+        /^https:\/\/media\.test\.com\/uploads\/users\/user-123\/[a-f0-9]+-minha_foto\.png$/,
       );
     });
   });
