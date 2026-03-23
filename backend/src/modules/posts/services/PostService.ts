@@ -2,6 +2,7 @@ import { generateSlug } from "../utils/slugifier";
 import { extractExcerpt } from "../utils/excerptExtractor";
 import { CreatePostDTO, UpdatePostDTO } from "../dtos/PostDTO";
 import prisma from "../../../lib/prisma";
+import { Role } from "../../../generated/prisma/enums";
 
 interface EditorContent {
   blocks: Array<{ type: string; data: Record<string, unknown> }>;
