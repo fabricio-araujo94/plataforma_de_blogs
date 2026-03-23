@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client/extension";
 import { PasswordService } from "./PasswordService";
 import { RegisterDTO, LoginDTO } from "../dtos/AuthDTO";
-
-const prisma = new PrismaClient();
+import prisma from "../../../lib/prisma";
 
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 const REFRESH_SECRET = process.env.REFRESH_SECRET || "super-refresh-secret";

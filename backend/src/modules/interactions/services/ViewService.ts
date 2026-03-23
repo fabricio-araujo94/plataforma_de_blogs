@@ -1,6 +1,4 @@
-import { PrismaClient } from "../../../generated/prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../../../lib/prisma";
 
 export class ViewService {
   // In-memory buffer: Map<postId, number of pending views>

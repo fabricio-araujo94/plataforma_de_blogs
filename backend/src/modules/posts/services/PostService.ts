@@ -1,9 +1,7 @@
-import { PrismaClient, Role } from "../../../generated/prisma/client";
 import { generateSlug } from "../utils/slugifier";
 import { extractExcerpt } from "../utils/excerptExtractor";
 import { CreatePostDTO, UpdatePostDTO } from "../dtos/PostDTO";
-
-const prisma = new PrismaClient();
+import prisma from "../../../lib/prisma";
 
 interface EditorContent {
   blocks: Array<{ type: string; data: Record<string, unknown> }>;

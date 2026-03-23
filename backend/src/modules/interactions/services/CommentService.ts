@@ -1,7 +1,5 @@
-import { PrismaClient } from "../../../generated/prisma/client";
 import { CreateCommentDTO } from "../dtos/CommentDTO";
-
-const prisma = new PrismaClient();
+import prisma from "../../../lib/prisma";
 
 export class CommentService {
   static async create(userId: string, postId: string, data: CreateCommentDTO) {
