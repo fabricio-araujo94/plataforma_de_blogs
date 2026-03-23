@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { PostService } from "../services/PostService";
 import { createPostSchema, updatePostSchema } from "../dtos/PostDTO";
+import { PrismaClient } from "../../../generated/prisma/client";
+
+const prisma = new PrismaClient();
 
 export class PostController {
   static async create(req: Request, res: Response) {
@@ -125,6 +128,34 @@ export class PostController {
       res
         .status(500)
         .json({ error: "Internal error while performing the search." });
+    }
+  }
+
+  static async listMyPosts(req: Request, res: Response) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized," });
+      }
+
+      const posts = await prisma.post.findMany({
+        where: { authorId: req.user.id },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          published: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: { views: true, likes: true, comments: true },
+          },
+        },
+        orderBy: { updatedAt: "desc" },
+      });
+
+      res.status(200).json(posts);
+    } catch (err: unknown) {
+      res.status(500).json({ error: "Error retrieving your posts." });
     }
   }
 }

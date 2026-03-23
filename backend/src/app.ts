@@ -59,6 +59,7 @@ app.post("/api/media/upload-url", authMiddleware, MediaController.getUploadUrl);
 
 app.post("/api/post/:postId/view", ViewController.register);
 app.get("/api/posts/:postId/views", ViewController.getCount);
+app.get("/api/posts/me", authMiddleware, PostController.listMyPosts);
 
 app.get("/api/authors/:id", AuthorController.getProfile);
 
