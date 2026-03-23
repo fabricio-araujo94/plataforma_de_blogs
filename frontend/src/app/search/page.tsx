@@ -48,7 +48,9 @@ export default async function SearchResultsPage({
         {query ? (
           <p className="text-gray-600">
             Mostrando resultados para{" "}
-            <span className="font-semibold text-gray-900">{query}</span>
+            <span className="font-semibold text-gray-900">
+              &quot;{query}&quot;
+            </span>
           </p>
         ) : (
           <p className="text-gray-600">
@@ -93,8 +95,8 @@ export default async function SearchResultsPage({
                 Nenhum artigo encontrado.
               </h2>
               <p className="text-gray-500 max-w-md mx-auto">
-                Não conseguimos encontrar nada que corresponda a "{query}".
-                Verifique a ortografia ou tente outras palavras-chave.
+                Não conseguimos encontrar nada que corresponda a &quot;{query}
+                &quot;. Verifique a ortografia ou tente outras palavras-chave.
               </p>
             </div>
           )

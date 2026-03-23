@@ -1,5 +1,5 @@
 import React from "react";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { UsersTable, AdminUser } from "./components/UsersTable";
 import { getUserSession, getAuthHeaders } from "@/lib/auth";
 
