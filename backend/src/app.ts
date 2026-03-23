@@ -32,6 +32,7 @@ app.use(cookieParser());
 
 app.post("/api/auth/register", AuthController.register);
 app.post("/api/auth/login", AuthController.login);
+app.post("/api/auth/logout", AuthController.logout);
 
 app.get("/api/posts/:postId/likes", LikeController.getLikesStatus);
 

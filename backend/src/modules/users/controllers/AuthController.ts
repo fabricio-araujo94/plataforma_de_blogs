@@ -41,4 +41,26 @@ export class AuthController {
       res.status(401).json({ error: error.message });
     }
   }
+
+  static async logout(req: Request, res: Response) {
+    try {
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+      });
+
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+      });
+
+      res.status(200).json({ message: "Logout successful." });
+    } catch (err: unknown) {
+      res.status(500).json({ error: "Error logging out." });
+    }
+  }
 }

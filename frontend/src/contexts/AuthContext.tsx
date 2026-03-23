@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { api } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -26,6 +27,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   async function login(credentials: LoginCredentials) {
     try {
@@ -37,9 +39,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  function logout() {
-    // TODO
-    setUser(null);
+  async function logout() {
+    try {
+      await api.post("/auth/logout");
+    } catch (err: unknown) {
+      console.error("Error communicating the logout to the server:", err);
+    } finally {
+      setUser(null);
+      router.push("/login");
+      router.refresh();
+    }
   }
 
   return (
